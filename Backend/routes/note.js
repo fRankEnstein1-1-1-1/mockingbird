@@ -172,4 +172,88 @@ router.delete("/:id", auth, async (req, res) => {
 
 });
 
+// ADD ANNOTATION TO NOTE
+router.post('/:id/annotation', auth, async (req, res) => {
+    try {
+        const { annotation } = req.body;
+        // annotation should be an object like:
+        // { type: 'circle', x: 100, y: 200, radius: 50, color: '#ff0000' }
+
+        const note = await Note.findOne({
+            _id: req.params.id,
+            userId: req.user
+        });
+
+        if (!note) {
+            return res.status(404).json({ message: 'Note not found' });
+        }
+
+        note.content.annotations.push(annotation);
+        note.updatedAt = Date.now();
+        await note.save();
+
+        res.status(200).json({
+            message: 'Annotation added successfully',
+            note
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// UPDATE ALL ANNOTATIONS (replace entire array)
+router.put('/:id/annotations', auth, async (req, res) => {
+    try {
+        const { annotations } = req.body;
+
+        const note = await Note.findOne({
+            _id: req.params.id,
+            userId: req.user
+        });
+
+        if (!note) {
+            return res.status(404).json({ message: 'Note not found' });
+        }
+
+        note.content.annotations = annotations;
+        note.updatedAt = Date.now();
+        await note.save();
+
+        res.status(200).json({
+            message: 'Annotations updated successfully',
+            note
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// DELETE SPECIFIC ANNOTATION
+router.delete('/:id/annotation/:annotationIndex', auth, async (req, res) => {
+    try {
+        const note = await Note.findOne({
+            _id: req.params.id,
+            userId: req.user
+        });
+
+        if (!note) {
+            return res.status(404).json({ message: 'Note not found' });
+        }
+
+        note.content.annotations.splice(req.params.annotationIndex, 1);
+        note.updatedAt = Date.now();
+        await note.save();
+
+        res.status(200).json({
+            message: 'Annotation deleted successfully',
+            note
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 module.exports = router;
