@@ -14,7 +14,7 @@ app.use(cors())
 app.use(express.json());
 app.use("/api/auth",authroute);
 app.use("/api/folder",folderroute)
-app.use("/api/note",noteroute)
+app.use("/api/notes",noteroute)
 app.use("/api/upload",uploadroute)
 app.listen(5000,()=>{
     console.log("server is running");
