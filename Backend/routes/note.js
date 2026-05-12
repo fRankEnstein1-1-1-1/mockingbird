@@ -102,6 +102,7 @@ router.get("/:id", auth, async (req, res) => {
 
 
 // UPDATE NOTE
+// UPDATE NOTE
 router.put("/:id", auth, async (req, res) => {
 
     try {
@@ -119,19 +120,35 @@ router.put("/:id", auth, async (req, res) => {
             });
         }
 
-        note.title = title || note.title;
+        // Safe title update
+        if (title !== undefined) {
+            note.title = title;
+        }
 
+        // Ensure content object exists
+        if (!note.content) {
+            note.content = {
+                text: "",
+                images: [],
+                voiceNotes: [],
+                annotations: []
+            };
+        }
+
+        // Safe text update
         if (text !== undefined) {
             note.content.text = text;
         }
 
-        note.updatedAt = Date.now();
+        note.updatedAt = new Date();
 
         await note.save();
 
         res.status(200).json(note);
 
     } catch (error) {
+
+        console.log("UPDATE NOTE ERROR:", error);
 
         res.status(500).json({
             message: error.message

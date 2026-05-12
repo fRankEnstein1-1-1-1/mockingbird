@@ -5,93 +5,103 @@ export const NotesContext = createContext();
 
 export const NotesProvider = ({ children }) => {
     const [folders, setFolders] = useState([]);
-    const [currentFolder, setCurrentFolder] = useState(null);
     const [notes, setNotes] = useState([]);
-    const [currentNote, setCurrentNote] = useState(null);
+    const [selectedNote, setSelectedNote] = useState(null);   // renamed for clarity
 
     // FOLDERS
     const fetchFolders = async () => {
         const res = await API.get('/folder');
-        setFolders(res.data);
+        setFolders(res.data || []);
         return res.data;
     };
 
     const createFolder = async (name, parentId = null) => {
         const res = await API.post('/folder', { name, parentId });
-        setFolders([...folders, res.data]);
+        setFolders(prev => [...prev, res.data]);
         return res.data;
     };
 
     const deleteFolder = async (folderId) => {
         await API.delete(`/folder/${folderId}`);
-        setFolders(folders.filter(f => f._id !== folderId));
+        setFolders(prev => prev.filter(f => f._id !== folderId));
     };
 
     // NOTES
     const fetchNotes = async (folderId) => {
-        const res = await API.get(`/notes/folder/${folderId}`);
-        setNotes(res.data);
-        return res.data;
+        try {
+            const res = await API.get(`/notes/folder/${folderId || 'root'}`); // better route handling
+            setNotes(res.data || []);
+            return res.data;
+        } catch (err) {
+            console.error(err);
+            setNotes([]);
+            return [];
+        }
     };
 
     const createNote = async (folderId, title, text) => {
-        const res = await API.post('/notes', { folderId, title, text });
-        setNotes([...notes, res.data]);
+        const res = await API.post('/notes', { folderId, title, text: text || '' });
+        setNotes(prev => [...prev, res.data]);
         return res.data;
     };
 
     const updateNote = async (noteId, title, text) => {
-        const res = await API.put(`/notes/${noteId}`, { title, text });
-        setNotes(notes.map(n => n._id === noteId ? res.data : n));
-        setCurrentNote(res.data);
+        const res = await API.put(`/notes/${noteId}`, { title, text: text || '' });
+        setNotes(prev => prev.map(n => n._id === noteId ? res.data : n));
+        setSelectedNote(res.data);
         return res.data;
     };
 
     const deleteNote = async (noteId) => {
         await API.delete(`/notes/${noteId}`);
-        setNotes(notes.filter(n => n._id !== noteId));
-        setCurrentNote(null);
+        setNotes(prev => prev.filter(n => n._id !== noteId));
+        setSelectedNote(null);
     };
 
-    // IMAGE UPLOAD
+    // IMAGE UPLOAD - FIXED
     const uploadImage = async (noteId, file) => {
         const formData = new FormData();
         formData.append('image', file);
+
         const res = await API.post(`/upload/image/${noteId}`, formData);
-        setCurrentNote(res.data.note);
-        return res.data;
+        
+        // Important: Update both lists
+        const updatedNote = res.data.note || res.data;
+        setNotes(prev => prev.map(n => n._id === noteId ? updatedNote : n));
+        setSelectedNote(updatedNote);
+        
+        return updatedNote;
     };
 
-    // VOICE UPLOAD
+    // VOICE UPLOAD - FIXED
     const uploadVoice = async (noteId, file) => {
         const formData = new FormData();
         formData.append('voice', file);
+
         const res = await API.post(`/upload/voice/${noteId}`, formData);
-        setCurrentNote(res.data.note);
-        return res.data;
-    };
-
-    // ANNOTATIONS
-    const addAnnotation = async (noteId, annotation) => {
-        const res = await API.post(`/notes/${noteId}/annotation`, { annotation });
-        setCurrentNote(res.data.note);
-        return res.data;
-    };
-
-    const updateAnnotations = async (noteId, annotations) => {
-        const res = await API.put(`/notes/${noteId}/annotations`, { annotations });
-        setCurrentNote(res.data.note);
-        return res.data;
+        
+        const updatedNote = res.data.note || res.data;
+        setNotes(prev => prev.map(n => n._id === noteId ? updatedNote : n));
+        setSelectedNote(updatedNote);
+        
+        return updatedNote;
     };
 
     return (
         <NotesContext.Provider value={{
-            folders, currentFolder, setCurrentFolder,
-            notes, currentNote, setCurrentNote,
-            fetchFolders, createFolder, deleteFolder,
-            fetchNotes, createNote, updateNote, deleteNote,
-            uploadImage, uploadVoice,
-            addAnnotation, updateAnnotations
+            folders,
+            notes,
+            selectedNote,
+            setSelectedNote,
+            fetchFolders,
+            createFolder,
+            deleteFolder,
+            fetchNotes,
+            createNote,
+            updateNote,
+            deleteNote,
+            uploadImage,
+            uploadVoice,
         }}>
             {children}
         </NotesContext.Provider>
