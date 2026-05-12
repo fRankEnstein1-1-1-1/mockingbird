@@ -478,11 +478,14 @@ body::before {
   font-size: 13px;
   line-height: 1.6;
   margin-bottom: 14px;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
   font-family: var(--font-mono);
+  
+  /* Line clamp set */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis; /* ensures ... shows in some edge cases */
 }
 
 .meta {
