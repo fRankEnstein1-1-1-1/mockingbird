@@ -5,7 +5,7 @@ const router = express.Router();
 const Note = require("../models/Notes");
 const Folder = require("../models/Folder");
 
-const auth = require("../middleware/auth");
+const auth = require("../middleware/Auth");
 
 
 // CREATE NOTE
