@@ -6,7 +6,7 @@ const auth = require("../middleware/Auth");
 const router = express.Router();
 
 
-// CREATE FOLDER
+// CREATE FOLDER \
 router.post("/", auth, async (req, res) => {
 
     try {
