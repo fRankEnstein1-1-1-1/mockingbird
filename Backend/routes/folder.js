@@ -6,7 +6,7 @@ const auth = require("../middleware/Auth");
 const router = express.Router();
 
 
-// CREATE FOLDER \
+// CREATE FOLDER \git
 router.post("/", auth, async (req, res) => {
 
     try {
