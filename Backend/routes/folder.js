@@ -1,7 +1,7 @@
 const express = require("express");
 
 const Folder = require("../models/Folder");
-const auth = require("../middleware/auth");
+const auth = require("../middleware/Auth");
 
 const router = express.Router();
 
