@@ -1,6 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { BookOpen, Rocket, Shield } from 'lucide-react';
+import './Auth.css';
 
 const Signup = () => {
     const [username, setUsername] = useState('');
@@ -20,26 +22,48 @@ const Signup = () => {
         }
     };
 
-    return (
-        <div style={styles.container}>
-            <div style={styles.card}>
-                <h1>Signup</h1>
-                {error && <p style={styles.error}>{error}</p>}
-                <form onSubmit={handleSubmit} style={styles.form}>
+  return (
+    <div className="auth-container">
+        <div className="auth-left">
+            <div className="auth-logo">
+                <BookOpen size={40} strokeWidth={2} />
+                Mockingbird
+            </div>
+            <div className="auth-tagline">Your daily notes companion</div>
+            <div className="auth-features">
+                <div className="feature">
+                    <span className="feature-icon"><Rocket size={20} /></span>
+                    <span>Get started in seconds</span>
+                </div>
+                <div className="feature">
+                    <span className="feature-icon"><Shield size={20} /></span>
+                    <span>Secure & private notes</span>
+                </div>
+            </div>
+        </div>
+
+        <div className="auth-right">
+            <div className="auth-card">
+                <h1>Create Account</h1>
+                <p>Start organizing your notes today</p>
+                
+                {error && <div className="error-message">{error}</div>}
+                
+                <form onSubmit={handleSubmit} className="auth-form">
                     <input
                         type="text"
                         placeholder="Username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        style={styles.input}
+                        className="auth-input"
                         required
                     />
                     <input
                         type="email"
-                        placeholder="Email"
+                        placeholder="Email address"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        style={styles.input}
+                        className="auth-input"
                         required
                     />
                     <input
@@ -47,59 +71,19 @@ const Signup = () => {
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        style={styles.input}
+                        className="auth-input"
                         required
                     />
-                    <button type="submit" style={styles.button}>Signup</button>
+                    <button type="submit" className="auth-button">Sign Up</button>
                 </form>
-                <p>
+                
+                <div className="auth-footer">
                     Already have an account? <Link to="/login">Login</Link>
-                </p>
+                </div>
             </div>
         </div>
-    );
-};
-
-const styles = {
-    container: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#f5f5f5'
-    },
-    card: {
-        backgroundColor: 'white',
-        padding: '40px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-        width: '400px'
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '15px',
-        marginTop: '20px'
-    },
-    input: {
-        padding: '12px',
-        fontSize: '16px',
-        border: '1px solid #ddd',
-        borderRadius: '4px'
-    },
-    button: {
-        padding: '12px',
-        fontSize: '16px',
-        backgroundColor: '#28a745',
-        color: 'white',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer'
-    },
-    error: {
-        color: 'red',
-        marginTop: '10px'
-    }
+    </div>
+);
 };
 
 export default Signup;

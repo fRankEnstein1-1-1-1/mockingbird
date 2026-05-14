@@ -1,6 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { BookOpen, Lock, Mail } from 'lucide-react';
+import './Auth.css';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -19,18 +21,40 @@ const Login = () => {
         }
     };
 
-    return (
-        <div style={styles.container}>
-            <div style={styles.card}>
-                <h1>Login</h1>
-                {error && <p style={styles.error}>{error}</p>}
-                <form onSubmit={handleSubmit} style={styles.form}>
+   return (
+    <div className="auth-container">
+        <div className="auth-left">
+            <div className="auth-logo">
+                <BookOpen size={40} strokeWidth={2} />
+                Mockingbird
+            </div>
+            <div className="auth-tagline">Organize your thoughts, brilliantly.</div>
+            <div className="auth-features">
+                <div className="feature">
+                    <span className="feature-icon"><BookOpen size={20} /></span>
+                    <span>Hierarchical folder structure</span>
+                </div>
+                <div className="feature">
+                    <span className="feature-icon"><Lock size={20} /></span>
+                    <span>Secure & private notes</span>
+                </div>
+            </div>
+        </div>
+
+        <div className="auth-right">
+            <div className="auth-card">
+                <h1>Welcome Back</h1>
+                <p>Login to continue to your workspace</p>
+                
+                {error && <div className="error-message">{error}</div>}
+                
+                <form onSubmit={handleSubmit} className="auth-form">
                     <input
                         type="email"
-                        placeholder="Email"
+                        placeholder="Email address"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        style={styles.input}
+                        className="auth-input"
                         required
                     />
                     <input
@@ -38,59 +62,19 @@ const Login = () => {
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        style={styles.input}
+                        className="auth-input"
                         required
                     />
-                    <button type="submit" style={styles.button}>Login</button>
+                    <button type="submit" className="auth-button">Login</button>
                 </form>
-                <p>
-                    Don't have an account? <Link to="/signup">Signup</Link>
-                </p>
+                
+                <div className="auth-footer">
+                    Don't have an account? <Link to="/signup">Sign up</Link>
+                </div>
             </div>
         </div>
-    );
-};
-
-const styles = {
-    container: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#f5f5f5'
-    },
-    card: {
-        backgroundColor: 'white',
-        padding: '40px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-        width: '400px'
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '15px',
-        marginTop: '20px'
-    },
-    input: {
-        padding: '12px',
-        fontSize: '16px',
-        border: '1px solid #ddd',
-        borderRadius: '4px'
-    },
-    button: {
-        padding: '12px',
-        fontSize: '16px',
-        backgroundColor: '#007bff',
-        color: 'white',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer'
-    },
-    error: {
-        color: 'red',
-        marginTop: '10px'
-    }
+    </div>
+);
 };
 
 export default Login;
